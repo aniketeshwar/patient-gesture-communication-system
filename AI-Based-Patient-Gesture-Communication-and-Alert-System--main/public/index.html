@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Patient Care | Sign In</title><link rel="stylesheet" href="css/command.css"></head>
+<body class="landing">
+<main class="login-shell">
+  <section class="brand-panel">
+    <div class="brand-mark">✚</div>
+    <h1>AI-Based Patient Gesture Communication and Alert System</h1>
+    <p>Patients who cannot speak can call for help with a hand gesture, an eye blink, a facial expression or a head movement. The system checks each signal, then alerts the nurse on the dashboard or on a phone connected to the same Wi-Fi.</p>
+    <div class="feature-pills"><span>Hand gestures</span><span>Eye blinks</span><span>Facial expressions</span><span>Head movements</span><span>Emergency signals</span></div>
+  </section>
+  <section class="login-card">
+    <h2>Sign in</h2><p class="muted">Use your authorised hospital account.</p>
+    <form id="loginForm">
+      <label>Username<input id="username" autocomplete="username" required></label>
+      <label>Password<input id="password" type="password" autocomplete="current-password" required></label>
+      <button class="primary-btn" type="submit">Sign in</button>
+      <div id="loginMsg" class="form-msg"></div>
+    </form>
+    <div class="security-note"><b>Security:</b> passwords are hashed with Node.js scrypt, sessions expire automatically and every action is logged.</div>
+  </section>
+</main>
+<script>
+if(localStorage.getItem('patientToken'))fetch('/api/auth-status',{headers:{Authorization:'Bearer '+localStorage.getItem('patientToken')}}).then(r=>r.json()).then(d=>{if(d.authenticated)location.href='/dashboard'}).catch(()=>{});
+const form=document.getElementById('loginForm'),msg=document.getElementById('loginMsg');
+form.addEventListener('submit',async e=>{e.preventDefault();msg.textContent='Signing in…';try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:username.value.trim(),password:password.value})});const d=await r.json();if(!r.ok)throw new Error(d.message||'Login failed');localStorage.setItem('patientToken',d.token);localStorage.setItem('patientUser',JSON.stringify(d.user));location.href='/dashboard';}catch(err){msg.textContent=err.message;msg.className='form-msg error';}});
+</script></body></html>
